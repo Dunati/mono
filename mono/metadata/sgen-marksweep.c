@@ -48,7 +48,7 @@
 #define MS_BLOCK_SIZE	ARCH_MIN_MS_BLOCK_SIZE
 #define MS_BLOCK_SIZE_SHIFT	ARCH_MIN_MS_BLOCK_SIZE_SHIFT
 #else
-#define MS_BLOCK_SIZE_SHIFT     14      /* INT FASTENABLE */
+#define MS_BLOCK_SIZE_SHIFT     16      /* INT FASTENABLE */
 #define MS_BLOCK_SIZE           (1 << MS_BLOCK_SIZE_SHIFT)
 #endif
 #define MAJOR_SECTION_SIZE	MS_BLOCK_SIZE
@@ -58,7 +58,7 @@
  * Don't allocate single blocks, but alloc a contingent of this many
  * blocks in one swoop.  This must be a power of two.
  */
-#define MS_BLOCK_ALLOC_NUM	32
+#define MS_BLOCK_ALLOC_NUM	1
 
 /*
  * Number of bytes before the first object in a block.  At the start
