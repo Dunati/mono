@@ -3198,6 +3198,16 @@ add_method_with_index (MonoAotCompile *acfg, MonoMethod *method, int index, gboo
 		g_ptr_array_add (acfg->extra_methods, method);
 }
 
+static gboolean
+prefer_gsharedvt_method (MonoAotCompile *acfg, MonoMethod *method)
+{
+	/* One instantiation with valuetypes is generated for each async method */
+	if (method->klass->image == mono_defaults.corlib && (!strcmp (method->klass->name, "AsyncMethodBuilderCore") || !strcmp (method->klass->name, "AsyncVoidMethodBuilder")))
+		return TRUE;
+	else
+		return FALSE;
+}
+
 static guint32
 get_method_index (MonoAotCompile *acfg, MonoMethod *method)
 {
@@ -3240,6 +3250,9 @@ add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth
 {
 	if (mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE))
 		method = mini_get_shared_method (method);
+	else if ((acfg->opts & MONO_OPT_GSHAREDVT) && prefer_gsharedvt_method (acfg, method) && mono_method_is_generic_sharable_full (method, FALSE, FALSE, TRUE))
+		/* Use the gsharedvt version */
+		return;
 
 	if (acfg->aot_opts.log_generics)
 		aot_printf (acfg, "%*sAdding method %s.\n", depth, "", mono_method_full_name (method, TRUE));
@@ -5734,8 +5747,6 @@ emit_klass_info (MonoAotCompile *acfg, guint32 token)
 	g_assert (klass->nested_classes_inited);
 
 	mono_class_setup_vtable (klass);
-	if (klass->exception_type)
-		g_error ("Error setting up %s class vtable\n", klass->name);
 
 	/* 
 	 * Emit all the information which is required for creating vtables so
