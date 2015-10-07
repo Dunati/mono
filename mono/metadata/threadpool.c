@@ -1151,7 +1151,7 @@ mono_thread_pool_cleanup (void)
 	if (threads) {
 		mono_mutex_lock (&threads_lock);
 		if (threads)
-			g_ptr_array_free (threads, FALSE);
+			g_ptr_array_free (threads, TRUE);
 		threads = NULL;
 		mono_mutex_unlock (&threads_lock);
 	}
@@ -1167,6 +1167,10 @@ mono_thread_pool_cleanup (void)
 	}
 
 	MONO_SEM_DESTROY (&monitor_sem);
+
+	if (async_tp.queue != NULL) {
+		threadpool_free_queue(&async_tp);
+	}
 }
 
 static gboolean
