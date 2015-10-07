@@ -1031,6 +1031,7 @@ void sgen_nursery_alloc_prepare_for_minor (void) MONO_INTERNAL;
 void sgen_nursery_alloc_prepare_for_major (void) MONO_INTERNAL;
 
 char* sgen_alloc_for_promotion (char *obj, size_t objsize, gboolean has_references) MONO_INTERNAL;
+void sgen_alloc_nursery_cleanup (void) MONO_INTERNAL;
 
 /* TLS Data */
 

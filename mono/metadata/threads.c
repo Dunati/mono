@@ -43,6 +43,11 @@
 
 #include <mono/metadata/gc-internal.h>
 
+
+#ifdef HAVE_SGEN_GC
+#include <mono/metadata/sgen-gc.h>
+#endif 
+
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -3621,17 +3626,41 @@ mono_thread_get_undeniable_exception (void)
 
 #if MONO_SMALL_CONFIG
 #define NUM_STATIC_DATA_IDX 4
-static const int static_data_size [NUM_STATIC_DATA_IDX] = {
+static const int static_data_size[NUM_STATIC_DATA_IDX] = {
 	64, 256, 1024, 4096
 };
 #else
 #define NUM_STATIC_DATA_IDX 8
-static const int static_data_size [NUM_STATIC_DATA_IDX] = {
+static const int static_data_size[NUM_STATIC_DATA_IDX] = {
 	1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216
 };
 #endif
 
-static uintptr_t* static_reference_bitmaps [NUM_STATIC_DATA_IDX];
+static uintptr_t* static_reference_bitmaps[NUM_STATIC_DATA_IDX];
+
+
+void 
+mono_thread_final_cleanup(void)
+{
+	int i;
+	for (i = 0; i < NUM_STATIC_DATA_IDX; ++i)
+	{
+		if (static_reference_bitmaps[i])
+		{
+			g_free(static_reference_bitmaps[i]);
+			static_reference_bitmaps[i] = 0;
+		}
+	}
+	mono_thread_info_detach();
+	mono_thread_smr_cleanup();
+#ifdef HAVE_SGEN_GC
+	sgen_alloc_nursery_cleanup();
+#endif
+	mono_g_hash_table_destroy(threads_starting_up);
+	mono_g_hash_table_destroy(thread_start_args);
+	mono_g_hash_table_destroy(threads);
+	threads = NULL;
+}
 
 static void
 mark_tls_slots (void *addr, MonoGCMarkFunc mark_func, void *gc_data)

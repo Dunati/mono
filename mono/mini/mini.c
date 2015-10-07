@@ -2656,6 +2656,8 @@ mono_destroy_compile (MonoCompile *cfg)
 
 	mono_debug_free_method (cfg);
 
+	mono_clean_direct_icall();
+
 	g_free (cfg->varinfo);
 	g_free (cfg->vars);
 	g_free (cfg->exception_message);
@@ -7575,6 +7577,7 @@ register_icalls (void)
 #endif
 
 	register_opcode_emulation (OP_FCONV_TO_U8, "__emul_fconv_to_u8", "ulong double", mono_fconv_u8, "mono_fconv_u8", FALSE);
+	register_opcode_emulation (OP_RCONV_TO_U8, "__emul_rconv_to_u8", "ulong float", mono_rconv_u8, "mono_rconv_u8", FALSE);
 	register_opcode_emulation (OP_FCONV_TO_U4, "__emul_fconv_to_u4", "uint32 double", mono_fconv_u4, "mono_fconv_u4", FALSE);
 	register_opcode_emulation (OP_FCONV_TO_OVF_I8, "__emul_fconv_to_ovf_i8", "long double", mono_fconv_ovf_i8, "mono_fconv_ovf_i8", FALSE);
 	register_opcode_emulation (OP_FCONV_TO_OVF_U8, "__emul_fconv_to_ovf_u8", "ulong double", mono_fconv_ovf_u8, "mono_fconv_ovf_u8", FALSE);
