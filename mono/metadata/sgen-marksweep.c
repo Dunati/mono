@@ -1911,7 +1911,7 @@ free_free_block_lists(MSBlockInfo ***lists)
 {
 	int i;
 	for (i = 0; i < MS_BLOCK_TYPE_MAX; ++i)
-		sgen_free_internal_dynamic (lists [i], sizeof(MSBlockInfo*) * num_block_obj_sizes, INTERNAL_MEM_MS_TABLES);
+		sgen_free_internal_dynamic (lists [i], sizeof (MSBlockInfo*) * num_block_obj_sizes, INTERNAL_MEM_MS_TABLES);
 }
 
 #undef pthread_create

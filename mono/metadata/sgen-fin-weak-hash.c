@@ -1,6 +1,4 @@
 /*
-/metadata/sgen-fin-weak-hash.c
-
  * sgen-fin-weak-hash.c: Finalizers and weak links.
  *
  * Author:
