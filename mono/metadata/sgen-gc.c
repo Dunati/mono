@@ -5483,6 +5483,19 @@ mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks)
 }
 
 
+void
+mono_gc_final_cleanup (void)
+{
+	GrayQueueSection* next;
+	GrayQueueSection* current = gray_queue.free_list;
+	while (current)
+	{
+		next = current->next;
+		sgen_gray_object_free_queue_section (current);
+		current = next;
+	}
+}
+
 
 
 

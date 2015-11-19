@@ -91,8 +91,9 @@ MonoObject  *ves_icall_System_GC_get_ephemeron_tombstone (void) MONO_INTERNAL;
 MonoBoolean ves_icall_Mono_Runtime_SetGCAllowSynchronousMajor (MonoBoolean flag) MONO_INTERNAL;
 
 extern void mono_gc_init (void) MONO_INTERNAL;
-extern void mono_gc_base_init (void) MONO_INTERNAL;
-extern void mono_gc_cleanup (void) MONO_INTERNAL;
+extern void mono_gc_base_init(void) MONO_INTERNAL;
+extern void mono_gc_cleanup(void) MONO_INTERNAL;
+extern void mono_gc_final_cleanup (void) MONO_INTERNAL;
 
 /*
  * Return whenever the current thread is registered with the GC (i.e. started

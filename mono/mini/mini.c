@@ -2656,8 +2656,6 @@ mono_destroy_compile (MonoCompile *cfg)
 
 	mono_debug_free_method (cfg);
 
-	mono_clean_direct_icall();
-
 	g_free (cfg->varinfo);
 	g_free (cfg->vars);
 	g_free (cfg->exception_message);
@@ -7792,6 +7790,8 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_profiler_shutdown ();
 
+	mono_tasklets_cleanup ();
+
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_cleanup (domain);
 #endif
@@ -7849,6 +7849,9 @@ mini_cleanup (MonoDomain *domain)
 #ifdef USE_JUMP_TABLES
 	mono_jumptable_cleanup ();
 #endif
+
+	mono_clean_direct_icall ();
+	mono_gc_final_cleanup ();
 }
 
 void

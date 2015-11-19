@@ -133,6 +133,7 @@ enum {
 };
 
 gsize* sgen_get_complex_descriptor (mword desc) MONO_INTERNAL;
+void sgen_complex_descriptor_cleanup (void) MONO_INTERNAL;
 void* sgen_get_complex_descriptor_bitmap (mword desc) MONO_INTERNAL;
 MonoGCRootMarkFunc sgen_get_user_descriptor_func (mword desc) MONO_INTERNAL;
 

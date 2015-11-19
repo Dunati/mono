@@ -145,7 +145,7 @@ void
 mono_monitor_cleanup (void)
 {
 	MonoThreadsSync *mon;
-	/* MonitorArray *marray, *next = NULL; */
+	MonitorArray *marray, *next = NULL;
 
 	/*mono_mutex_destroy (&monitor_mutex);*/
 
@@ -153,21 +153,19 @@ mono_monitor_cleanup (void)
 	for (mon = monitor_freelist; mon; mon = mon->data)
 		mon->wait_list = (gpointer)-1;
 
-	/* FIXME: This still crashes with sgen (async_read.exe) */
-	/*
 	for (marray = monitor_allocated; marray; marray = next) {
 		int i;
 
 		for (i = 0; i < marray->num_monitors; ++i) {
 			mon = &marray->monitors [i];
 			if (mon->wait_list != (gpointer)-1)
-				mono_gc_weak_link_remove (&mon->data);
+				mono_gc_weak_link_remove (&mon->data, TRUE);
 		}
 
 		next = marray->next;
 		g_free (marray);
 	}
-	*/
+
 }
 
 static int

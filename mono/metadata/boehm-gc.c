@@ -1385,5 +1385,8 @@ mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks)
 
 	GC_set_finalizer_notify_proc ((void (*) (GC_PTR))fin_notifier);
 }
-
+void
+mono_gc_final_cleanup (void)
+{
+}
 #endif /* no Boehm GC */
