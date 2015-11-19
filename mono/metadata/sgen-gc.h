@@ -732,6 +732,7 @@ void sgen_marksweep_par_init (SgenMajorCollector *collector) MONO_INTERNAL;
 void sgen_marksweep_fixed_par_init (SgenMajorCollector *collector) MONO_INTERNAL;
 void sgen_marksweep_conc_init (SgenMajorCollector *collector) MONO_INTERNAL;
 SgenMajorCollector* sgen_get_major_collector (void) MONO_INTERNAL;
+void sgen_marksweep_cleanup (void) MONO_INTERNAL;
 
 
 typedef struct _SgenRemeberedSet {
@@ -870,6 +871,7 @@ const char* sgen_safe_name (void* obj) MONO_INTERNAL;
 gboolean sgen_object_is_live (void *obj) MONO_INTERNAL;
 
 void  sgen_init_fin_weak_hash (void) MONO_INTERNAL;
+void  sgen_fin_weak_hash_cleanup (void) MONO_INTERNAL;
 
 gboolean sgen_need_bridge_processing (void) MONO_INTERNAL;
 void sgen_bridge_reset_data (void) MONO_INTERNAL;

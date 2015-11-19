@@ -223,13 +223,15 @@
 #endif
 
 #ifdef MALLOC
+#define FREE free
 #ifdef KR_headers
 extern char *MALLOC();
 #else
 extern void *MALLOC(size_t);
 #endif
 #else
-#define MALLOC malloc
+#define MALLOC g_malloc
+#define FREE g_free
 #endif
 
 #define Omit_Private_Memory
@@ -576,7 +578,7 @@ Bfree
 #endif
 {
 #ifdef Omit_Private_Memory
-	free (v);
+	FREE (v);
 #else
 	if (v) {
 		ACQUIRE_DTOA_LOCK(0);

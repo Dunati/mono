@@ -61,4 +61,6 @@ gboolean sgen_cement_lookup_or_register (char *obj) MONO_INTERNAL;
 void sgen_pin_cemented_objects (void) MONO_INTERNAL;
 void sgen_cement_clear_below_threshold (void) MONO_INTERNAL;
 
+void sgen_pin_cleanup (void) MONO_INTERNAL;
+
 #endif

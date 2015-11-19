@@ -1,4 +1,6 @@
 /*
+/metadata/sgen-fin-weak-hash.c
+
  * sgen-fin-weak-hash.c: Finalizers and weak links.
  *
  * Author:
@@ -769,10 +771,7 @@ sgen_null_links_for_domain (MonoDomain *domain, int generation)
 			 */
 			SGEN_LOG (5, "Disappearing link %p not freed", link);
 
-			/*
-			 * FIXME: Why don't we free the entry here?
-			 */
-			SGEN_HASH_TABLE_FOREACH_REMOVE (FALSE);
+			SGEN_HASH_TABLE_FOREACH_REMOVE (TRUE);
 
 			continue;
 		}
@@ -914,6 +913,16 @@ sgen_init_fin_weak_hash (void)
 	mono_counters_register ("FinWeak Index decremented", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_index_decremented);
 	mono_counters_register ("FinWeak Entry invalidated", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_entry_invalidated);
 #endif
+}
+
+void  sgen_fin_weak_hash_cleanup (void)
+{
+	sgen_hash_table_clean (&minor_finalizable_hash);
+	sgen_hash_table_clean (&major_finalizable_hash);
+	sgen_hash_table_clean (&minor_disappearing_link_hash);
+	sgen_hash_table_clean (&major_disappearing_link_hash);
+
+
 }
 
 #endif /* HAVE_SGEN_GC */

@@ -1132,6 +1132,20 @@ threadpool_kill_idle_threads (ThreadPool *tp)
 void
 mono_thread_pool_cleanup (void)
 {
+#ifndef DISABLE_PERFCOUNTERS
+	mono_perfcounter_free_data (async_tp.pc_nitems);
+	async_tp.pc_nitems = NULL;
+
+	mono_perfcounter_free_data (async_io_tp.pc_nitems);
+	async_io_tp.pc_nitems = NULL;
+
+	mono_perfcounter_free_data (async_tp.pc_nthreads);
+	async_tp.pc_nthreads = NULL;
+
+	mono_perfcounter_free_data (async_io_tp.pc_nthreads);
+	async_io_tp.pc_nthreads = NULL;
+#endif
+
 	if (InterlockedExchange (&async_io_tp.pool_status, 2) == 1) {
 		socket_io_cleanup (&socket_io_data); /* Empty when DISABLE_SOCKETS is defined */
 		threadpool_kill_idle_threads (&async_io_tp);

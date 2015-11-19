@@ -7714,7 +7714,7 @@ mono_aot_method_hash (MonoMethod *method)
 		break;
 	}
 	
-	free (hashes_start);
+	g_free (hashes_start);
 	
 	return c;
 }
