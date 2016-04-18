@@ -161,6 +161,15 @@ static SgenPointerQueue allocated_blocks;
 static void *empty_blocks = NULL;
 static size_t num_empty_blocks = 0;
 
+#define FORSOME_BLOCK(bl, chunk, total_chunks)	{\
+	size_t chunk_size = allocated_blocks.next_slot / total_chunks;\
+	size_t limit = chunk_size * (chunk + 1);\
+	if (limit > allocated_blocks.next_slot)\
+		limit = allocated_blocks.next_slot;\
+	size_t __index;\
+	for (__index = chunk*chunk_size; __index < limit; ++__index) {\
+		(bl) = BLOCK_UNTAG_HAS_REFERENCES (allocated_blocks.data [__index]);
+
 #define FOREACH_BLOCK(bl)	{ size_t __index; for (__index = 0; __index < allocated_blocks.next_slot; ++__index) { (bl) = BLOCK_UNTAG_HAS_REFERENCES (allocated_blocks.data [__index]);
 #define FOREACH_BLOCK_HAS_REFERENCES(bl,hr)	{ size_t __index; for (__index = 0; __index < allocated_blocks.next_slot; ++__index) { (bl) = allocated_blocks.data [__index]; (hr) = BLOCK_IS_TAGGED_HAS_REFERENCES ((bl)); (bl) = BLOCK_UNTAG_HAS_REFERENCES ((bl));
 #define END_FOREACH_BLOCK	} }
@@ -653,15 +662,16 @@ major_ptr_is_in_non_pinned_space (char *ptr, char **start)
 	return FALSE;
 }
 
+
 static void
-major_iterate_objects (IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data)
+major_iterate_some_objects (IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data, int chunk, int total_chunks)
 {
 	gboolean sweep = flags & ITERATE_OBJECTS_SWEEP;
 	gboolean non_pinned = flags & ITERATE_OBJECTS_NON_PINNED;
 	gboolean pinned = flags & ITERATE_OBJECTS_PINNED;
 	MSBlockInfo *block;
 
-	FOREACH_BLOCK (block) {
+    FORSOME_BLOCK(block, chunk, total_chunks) {
 		int count = MS_BLOCK_FREE / block->obj_size;
 		int i;
 
@@ -687,6 +697,13 @@ major_iterate_objects (IterateObjectsFlags flags, IterateObjectCallbackFunc call
 		}
 	} END_FOREACH_BLOCK;
 }
+
+static void
+major_iterate_objects(IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data)
+{
+    major_iterate_some_objects(flags, callback, data, 0, 1);
+}
+
 
 static gboolean
 major_is_valid_object (char *object)
@@ -1987,6 +2004,7 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	collector->alloc_object = major_alloc_object;
 	collector->free_pinned_object = free_pinned_object;
 	collector->iterate_objects = major_iterate_objects;
+	collector->iterate_some_objects = major_iterate_some_objects;
 	collector->free_non_pinned_object = major_free_non_pinned_object;
 	collector->find_pin_queue_start_ends = major_find_pin_queue_start_ends;
 	collector->pin_objects = major_pin_objects;

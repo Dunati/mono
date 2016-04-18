@@ -688,6 +688,7 @@ struct _SgenMajorCollector {
 	void* (*alloc_object) (MonoVTable *vtable, size_t size, gboolean has_references);
 	void (*free_pinned_object) (char *obj, size_t size);
 	void (*iterate_objects) (IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data);
+	void (*iterate_some_objects) (IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data, int chunk, int total_chunks);
 	void (*free_non_pinned_object) (char *obj, size_t size);
 	void (*find_pin_queue_start_ends) (SgenGrayQueue *queue);
 	void (*pin_objects) (SgenGrayQueue *queue);
